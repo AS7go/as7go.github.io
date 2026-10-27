@@ -1,33 +1,150 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test site on GitHub!</title>
+    <title>Timer Test on GitHub!</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin-top: 100px;
+            margin-top: 80px;
             background-color: #1a1a1a;
             color: #ffffff;
-        }
-        h1 {
-            color: #4CAF50;
         }
         .box {
             background-color: #2b2b2b;
             display: inline-block;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            min-width: 350px;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-top: 0;
+        }
+        #timer {
+            font-size: 38px;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: monospace;
+            color: #ffeb3b;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .btn-stop {
+            background-color: #f44336;
+        }
+        .btn-reset {
+            background-color: #ff9800;
         }
     </style>
 </head>
 <body>
     <div class="box">
-        <h1>Hello! 🚀</h1>
-        <p>Checking if the site works on GitHub Pages!</p>
-        <p>It’s working successfully!</p>
+        <h1>Timer 🚀</h1>
+        <p>Max limit: 10 hours</p>
+        
+        <div id="timer">00:00:00:00</div>
+
+        <div>
+            <button class="btn" id="startBtn">Start</button>
+            <button class="btn btn-stop" id="stopBtn">Stop</button>
+            <button class="btn btn-reset" id="resetBtn">Reset</button>
+        </div>
     </div>
+
+    <script>
+        let elapsedTime = 0; // прошедшее время в миллисекундах
+        let lastTimestamp = null;
+        let animationFrameId = null;
+        let isRunning = false;
+
+        const maxMilliseconds = 10 * 3600 * 1000; // 10 часов в миллисекундах
+
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        function formatTime(ms) {
+            const totalCentiseconds = Math.floor(ms / 10);
+            const centiseconds = totalCentiseconds % 100;
+            const totalSeconds = Math.floor(totalCentiseconds / 100);
+            const seconds = totalSeconds % 60;
+            const totalMinutes = Math.floor(totalSeconds / 60);
+            const minutes = totalMinutes % 60;
+            const hours = Math.floor(totalMinutes / 60);
+
+            return (
+                String(hours).padStart(2, '0') + ':' +
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0') + ':' +
+                String(centiseconds).padStart(2, '0')
+            );
+        }
+
+        function updateDisplay() {
+            timerDisplay.textContent = formatTime(elapsedTime);
+        }
+
+        function step(timestamp) {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+            const delta = timestamp - lastTimestamp;
+            lastTimestamp = timestamp;
+
+            elapsedTime += delta;
+
+            if (elapsedTime >= maxMilliseconds) {
+                elapsedTime = maxMilliseconds;
+                updateDisplay();
+                stopTimer();
+                alert('Maximum limit of 10 hours reached!');
+                return;
+            }
+
+            updateDisplay();
+            if (isRunning) {
+                animationFrameId = requestAnimationFrame(step);
+            }
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            if (elapsedTime >= maxMilliseconds) return;
+
+            isRunning = true;
+            lastTimestamp = null;
+            animationFrameId = requestAnimationFrame(step);
+        }
+
+        function stopTimer() {
+            if (!isRunning) return;
+            isRunning = false;
+            cancelAnimationFrame(animationFrameId);
+        }
+
+        function resetTimer() {
+            stopTimer();
+            elapsedTime = 0;
+            updateDisplay();
+        }
+
+        startBtn.addEventListener('click', startTimer);
+        stopBtn.addEventListener('click', stopTimer);
+        resetBtn.addEventListener('click', resetTimer);
+    </script>
 </body>
 </html>
