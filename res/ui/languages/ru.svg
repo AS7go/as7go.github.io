@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <clipPath id="rounded-corners">
+      <rect width="512" height="512" rx="110" ry="110" />
+    </clipPath>
+  </defs>
+  
+  <g clip-path="url(#rounded-corners)">
+    <!-- Верхняя белая полоса -->
+    <rect width="512" height="170.67" fill="#ffffff" />
+    
+    <!-- Средняя синяя полоса (используется оттенок синего из переданного изображения флага) -->
+    <rect y="170.67" width="512" height="170.66" fill="#0084d1" />
+    
+    <!-- Нижняя белая полоса -->
+    <rect y="341.33" width="512" height="170.67" fill="#ffffff" />
+  </g>
+</svg>
